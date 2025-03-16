@@ -19,7 +19,8 @@ app = Flask(__name__, static_folder="../frontend", template_folder="../frontend"
 app.secret_key = "video-annotation-tool-secret-key"  # For flash messages
 
 DATA_FILE = os.path.join(os.path.dirname(__file__), "data", "annotation.json")
-VIDEOS_DIR = os.path.join(os.path.dirname(__file__), "..", "videos")
+REMARKS_FILE = os.path.join(os.path.dirname(__file__), "data", "remarks.json")
+VIDEOS_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "videos")
 
 # Setup video symlinks
 annotation_path = os.path.join(os.path.dirname(__file__), "data", "annotation.json")
@@ -58,6 +59,33 @@ def save_annotations(annotation_data):
         return True
     except Exception as e:
         print(f"Error saving annotation file: {e}")
+        return False
+
+
+def load_remarks():
+    """Load remarks from JSON file"""
+    try:
+        if os.path.exists(REMARKS_FILE):
+            with open(REMARKS_FILE, "r") as f:
+                return json.load(f)
+        else:
+            return {}
+    except Exception as e:
+        print(f"Error loading remarks file: {e}")
+        return {}
+
+
+def save_remarks(remarks_data):
+    """Save remarks to JSON file"""
+    try:
+        # Ensure directory exists
+        os.makedirs(os.path.dirname(REMARKS_FILE), exist_ok=True)
+
+        with open(REMARKS_FILE, "w") as f:
+            json.dump(remarks_data, f, indent=4)
+        return True
+    except Exception as e:
+        print(f"Error saving remarks file: {e}")
         return False
 
 
@@ -144,6 +172,7 @@ def cleanup_annotations():
 def index():
     """Render the main page with all available videos"""
     annotation_data = load_annotations()
+    remarks_data = load_remarks()
 
     # Debug output to check paths
     print("\nLoaded annotation paths:")
@@ -153,6 +182,8 @@ def index():
 
     # Convert paths to normalized format
     norm_annotation_data = {}
+    norm_remarks_data = {}
+
     for path, annotations in annotation_data.items():
         norm_path = normalize_path(path)
         if norm_path not in norm_annotation_data:
@@ -161,6 +192,11 @@ def index():
         for annotation in annotations:
             if annotation not in norm_annotation_data[norm_path]:
                 norm_annotation_data[norm_path].append(annotation)
+
+    # Normalize remarks paths as well
+    for path, remarks in remarks_data.items():
+        norm_path = normalize_path(path)
+        norm_remarks_data[norm_path] = remarks
 
     all_video_paths = get_all_videos()  # These are already normalized
 
@@ -259,6 +295,7 @@ def index():
         videos=paginated_videos,
         current_video=current_video,
         annotations=annotations,
+        remarks=norm_remarks_data,
         filter_mode=filter_mode,
         search_query=search_query,
         total_videos=len(all_video_paths),
@@ -397,6 +434,51 @@ def delete_annotation():
             flash("Failed to delete annotation", "error")
     else:
         flash("Annotation not found", "error")
+
+    return redirect(url_for("index", video=encoded_path))
+
+
+@app.route("/add_remark", methods=["POST"])
+def add_remark():
+    """Add or update a remark for a video"""
+    video_path = request.form.get("video_path")
+    remark = request.form.get("remark", "").strip()
+    encoded_path = request.form.get("encoded_path")
+
+    # Debug information to find the issue
+    print(
+        f"Received add_remark request: video_path={video_path}, encoded_path={encoded_path}"
+    )
+
+    if not encoded_path:
+        flash("Missing encoded path", "error")
+        return redirect(url_for("index"))
+
+    # Even if video_path is empty, we can still use encoded_path to redirect
+    if not video_path:
+        flash("Missing video path", "error")
+        return redirect(url_for("index", video=encoded_path))
+
+    # Normalize path before using it
+    video_path = normalize_path(video_path)
+
+    # Load existing remarks
+    remarks_data = load_remarks()
+
+    # If remark is empty and there's an existing remark, remove it
+    if not remark and video_path in remarks_data:
+        del remarks_data[video_path]
+        if save_remarks(remarks_data):
+            flash("Remark removed successfully", "success")
+        else:
+            flash("Failed to remove remark", "error")
+    # Otherwise update or add the remark
+    elif remark:
+        remarks_data[video_path] = remark
+        if save_remarks(remarks_data):
+            flash("Remark saved successfully", "success")
+        else:
+            flash("Failed to save remark", "error")
 
     return redirect(url_for("index", video=encoded_path))
 

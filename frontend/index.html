@@ -5,6 +5,93 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Video Annotation Tool</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* Custom video progress bar styles */
+        video::-webkit-progress-bar {
+            background-color: #e0e0e0;
+            border-radius: 2px;
+        }
+        
+        video::-webkit-progress-value {
+            background-color: #4CAF50; /* Green color */
+            border-radius: 2px;
+        }
+        
+        video::-moz-progress-bar {
+            background-color: #4CAF50; /* Green color */
+            border-radius: 2px;
+        }
+        
+        /* Progress styling for IE/Edge */
+        progress {
+            color: #4CAF50;
+        }
+        
+        /* Styling for video controls */
+        video::-webkit-media-controls-timeline {
+            background-color: rgba(230, 230, 230, 0.8);
+            border-radius: 3px;
+            padding: 1px;
+        }
+        
+        video::-webkit-media-controls-panel {
+            background: rgba(20, 20, 20, 0.7);
+        }
+
+        /* Remark field styling */
+        .video-remark-container {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9fa;
+            border-radius: 5px;
+        }
+        
+        .remark-field {
+            margin-top: 5px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .remark-input {
+            width: 100%;
+            min-height: 80px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: inherit;
+            resize: vertical;
+        }
+        
+        .remark-actions {
+            display: flex;
+            justify-content: flex-end;
+        }
+        
+        .remark-btn {
+            padding: 8px 12px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .remark-btn:hover {
+            background-color: #218838;
+        }
+        
+        .remark-text {
+            margin-top: 10px;
+            font-style: italic;
+            color: #333;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 3px;
+            white-space: pre-line;
+            line-height: 1.5;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -167,7 +254,7 @@
                         <button class="speed-btn active" data-speed="1.0" onclick="setSpeed(1.0, this)">1.0x</button>
                         <button class="speed-btn" data-speed="1.5" onclick="setSpeed(1.5, this)">1.5x</button>
                         <button class="speed-btn" data-speed="2.0" onclick="setSpeed(2.0, this)">2x</button>
-                      </div>
+                    </div>
 
                     <script>
                         function setSpeed(speed, btn) {
@@ -337,7 +424,31 @@
                             });
                         }
                     </script>
-                    
+
+                    <!-- Video remark section moved to bottom -->
+                    <div class="video-remark-container">
+                        <h3>Video Remarks</h3>
+                        
+                        {% if remarks and remarks.get(current_video.path) %}
+                            <div class="remark-text">
+                                {{ remarks[current_video.path] }}
+                            </div>
+                        {% endif %}
+                        
+                        <form action="{{ url_for('add_remark') }}" method="post" class="remark-field">
+                            <input type="hidden" name="video_path" value="{{ current_video.path }}">
+                            <input type="hidden" name="encoded_path" value="{{ current_video.encoded_path }}">
+                            <!-- Add debug info visible only during development -->
+                            <div style="display: none;">
+                                <p>Debug - Video Path: {{ current_video.path }}</p>
+                                <p>Debug - Encoded Path: {{ current_video.encoded_path }}</p>
+                            </div>
+                            <textarea name="remark" placeholder="Add remarks or notes about this video (optional)" class="remark-input" onkeydown="if(event.keyCode === 32) event.stopPropagation();">{{ remarks[current_video.path] if remarks and remarks.get(current_video.path) else '' }}</textarea>
+                            <div class="remark-actions">
+                                <button type="submit" class="remark-btn">Save Remarks</button>
+                            </div>
+                        </form>
+                    </div>
                     <div class="annotation-controls">
                         <h3>Add New Annotation</h3>
                         <form action="{{ url_for('add_annotation') }}" method="post" class="annotation-form">
@@ -386,6 +497,8 @@
                             {% endif %}
                         </div>
                     </div>
+                    
+                  
                 {% else %}
                     <div class="no-video-message">
                         <p>Please select a video from the left panel to start annotating.</p>
