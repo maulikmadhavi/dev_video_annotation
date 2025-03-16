@@ -162,6 +162,8 @@
                         <!-- ...existing code for jump notification... -->
                     {% endif %}
                     <div class="speed-controls">
+                        <button class="speed-btn" data-speed="0.5" onclick="setSpeed(0.5, this)">0.5x</button>
+                        <button class="speed-btn" data-speed="0.75" onclick="setSpeed(0.75, this)">0.75x</button>
                         <button class="speed-btn active" data-speed="1.0" onclick="setSpeed(1.0, this)">1.0x</button>
                         <button class="speed-btn" data-speed="1.5" onclick="setSpeed(1.5, this)">1.5x</button>
                         <button class="speed-btn" data-speed="2.0" onclick="setSpeed(2.0, this)">2x</button>
@@ -211,7 +213,41 @@
                             var milliseconds = Math.floor((time - seconds) * 1000);
                             return seconds + '.' + ('000' + milliseconds).slice(-3);
                             }
-                            // --- End: Millisecond Time Display ---                            
+                            // --- End: Millisecond Time Display ---   
+                            
+                            // --- Start: Keyboard Navigation Controls ---
+                            document.addEventListener('keydown', function(event) {
+                                // Only process keyboard events if video is loaded
+                                if (!video) return;
+                                
+                                const seekAmount = 1; // Seconds to jump forward/backward
+                                
+                                switch(event.key) {
+                                    case "ArrowLeft":
+                                        // Seek backward
+                                        video.currentTime = Math.max(0, video.currentTime - seekAmount);
+                                        event.preventDefault();
+                                        console.log("Seeking backward " + seekAmount + " seconds");
+                                        break;
+                                    case "ArrowRight":
+                                        // Seek forward
+                                        video.currentTime = Math.min(video.duration, video.currentTime + seekAmount);
+                                        event.preventDefault();
+                                        console.log("Seeking forward " + seekAmount + " seconds");
+                                        break;
+                                    case " ": // Space bar
+                                        // Play/pause
+                                        if (video.paused) {
+                                            video.play();
+                                        } else {
+                                            video.pause();
+                                        }
+                                        event.preventDefault();
+                                        console.log(video.paused ? "Paused" : "Playing");
+                                        break;
+                                }
+                            });
+                            // --- End: Keyboard Navigation Controls ---
                         }
                         
                         function createTimelineMarkers() {
