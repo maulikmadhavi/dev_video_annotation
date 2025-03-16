@@ -1,14 +1,17 @@
+import base64
+import json
+import os
+
 from flask import (
     Flask,
-    request,
-    jsonify,
-    render_template,
-    send_from_directory,
-    redirect,
-    url_for,
     flash,
+    jsonify,
+    redirect,
+    render_template,
+    request,
+    send_from_directory,
+    url_for,
 )
-import json, os, base64
 
 app = Flask(__name__, static_folder="../frontend", template_folder="../frontend")
 app.secret_key = "video-annotation-tool-secret-key"  # For flash messages
@@ -391,4 +394,4 @@ def delete_annotation():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", debug=True)

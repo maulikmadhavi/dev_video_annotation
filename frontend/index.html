@@ -98,7 +98,7 @@
                     {% endif %}
                 </div>
                 
-                <div id="videoList" class="video-list">
+                    <div id="videoList" class="video-list">
                     {% if videos %}
                         {% for video in videos %}
                             <form action="{{ url_for('select_video') }}" method="post" class="video-item-form">
@@ -153,12 +153,38 @@
                         <div id="timelineMarkers" class="timeline-markers"></div>
                     </div>
                     
+                    <!-- Add the time display below the video container -->
+                    <div class="time-display">
+                        Current Time: <span id="timeDisplay">0.000</span> seconds
+                    </div>                    
                     <!-- Jump to time if specified in URL -->
                     {% if request.args.get('jump_to') %}
                         <!-- ...existing code for jump notification... -->
                     {% endif %}
-                    
+                    <div class="speed-controls">
+                        <button class="speed-btn active" data-speed="1.0" onclick="setSpeed(1.0, this)">1.0x</button>
+                        <button class="speed-btn" data-speed="1.5" onclick="setSpeed(1.5, this)">1.5x</button>
+                        <button class="speed-btn" data-speed="2.0" onclick="setSpeed(2.0, this)">2x</button>
+                      </div>
+
                     <script>
+                        function setSpeed(speed, btn) {
+                            var video = document.getElementById('videoPlayer');
+                            if (video) {
+                            video.playbackRate = speed;
+                            }
+                            
+                            // Remove active class from all buttons
+                            var buttons = document.querySelectorAll('.speed-btn');
+                            buttons.forEach(function(button) {
+                            button.classList.remove('active');
+                            });
+                            
+                            // Add active class to the clicked button
+                            btn.classList.add('active');
+                            
+                            console.log("Playback speed set to " + speed + "x");
+                        }
                         // Consolidated script that runs in all cases, not just on jump
                         window.onload = function() {
                             // Handle jump to time if specified
@@ -171,6 +197,21 @@
                             
                             // Always create timeline markers
                             createTimelineMarkers();
+                            
+                            // --- Start: Millisecond Time Display ---
+                            var timeDisplay = document.getElementById('timeDisplay');
+                            // Update the time display on each time update
+                            video.addEventListener('timeupdate', function() {
+                            timeDisplay.textContent = formatTime(video.currentTime);
+                            });
+
+                            // Function to format time with milliseconds (e.g., 12.345)
+                            function formatTime(time) {
+                            var seconds = Math.floor(time);
+                            var milliseconds = Math.floor((time - seconds) * 1000);
+                            return seconds + '.' + ('000' + milliseconds).slice(-3);
+                            }
+                            // --- End: Millisecond Time Display ---                            
                         }
                         
                         function createTimelineMarkers() {
