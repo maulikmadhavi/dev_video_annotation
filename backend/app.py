@@ -13,11 +13,19 @@ from flask import (
     url_for,
 )
 
+from utils.video_symlink_manager import VideoSymlinkManager
+
 app = Flask(__name__, static_folder="../frontend", template_folder="../frontend")
 app.secret_key = "video-annotation-tool-secret-key"  # For flash messages
 
 DATA_FILE = os.path.join(os.path.dirname(__file__), "data", "annotation.json")
 VIDEOS_DIR = os.path.join(os.path.dirname(__file__), "..", "videos")
+
+# Setup video symlinks
+annotation_path = os.path.join(os.path.dirname(__file__), "data", "annotation.json")
+videos_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "videos")
+symlink_manager = VideoSymlinkManager(annotation_path, videos_dir)
+symlink_manager.create_symlinks()
 
 
 def normalize_path(path):

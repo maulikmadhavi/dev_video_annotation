@@ -1,0 +1,10 @@
+{
+  "videoDirectories": [
+    "/home/maulik/Documents/Tool/video_annotation_tool/videos/",
+    "/home/maulik/Videos/"
+  ],
+  "allowAbsolutePaths": true,
+  "verifyFileExistence": true,
+  "createSymlinks": true,
+  "symlinkDirectory": "/home/maulik/Documents/Tool/video_annotation_tool/videos/"
+}
