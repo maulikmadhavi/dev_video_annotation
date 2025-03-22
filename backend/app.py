@@ -1,7 +1,7 @@
 import base64
 import json
 import os
-
+import json
 from flask import (
     Flask,
     flash,
@@ -14,6 +14,16 @@ from flask import (
 )
 
 from utils.video_symlink_manager import VideoSymlinkManager
+
+
+with open("backend/config.json", "r") as f:
+    config = json.load(f)
+
+video_directories = []
+for dir_path in config["videoDirectories"]:
+    video_directories.append(os.path.expandvars(dir_path))
+
+symlink_directory = os.path.expandvars(config["symlinkDirectory"])
 
 app = Flask(__name__, static_folder="../frontend", template_folder="../frontend")
 app.secret_key = "video-annotation-tool-secret-key"  # For flash messages
