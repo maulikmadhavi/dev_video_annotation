@@ -91,4 +91,19 @@ If the tool detects inconsistent file paths in your annotation data, a warning w
 
 ## Data Storage
 
-Annotation data is stored in:
+Annotation data is stored in: 
+
+- `/backend/data/annotation.json` (for existing annotations)
+
+
+## For new data annotation
+1. Use `convert_annotations.py` to convert your CSV or XLS data to JSON format.
+
+```bash
+python backend/convert_annotations.py --in-file backend/data/input.csv
+```
+
+2. 
+
+
+

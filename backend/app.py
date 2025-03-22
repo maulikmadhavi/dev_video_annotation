@@ -341,7 +341,9 @@ def select_video():
         norm_path = normalize_path(video_path)
         # Encode the path to make it URL-safe
         encoded_path = base64.b64encode(norm_path.encode()).decode()
-        return redirect(url_for("index", video=encoded_path, filter=filter_mode, page=page))
+        return redirect(
+            url_for("index", video=encoded_path, filter=filter_mode, page=page)
+        )
     return redirect(url_for("index", filter=filter_mode))
 
 
@@ -485,4 +487,4 @@ def add_remark():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", debug=True, port=5003)
+    app.run(host="0.0.0.0", debug=True, port=5000)
