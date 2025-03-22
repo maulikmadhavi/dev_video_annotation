@@ -191,6 +191,7 @@
                             <form action="{{ url_for('select_video') }}" method="post" class="video-item-form">
                                 <input type="hidden" name="video_path" value="{{ video.path }}">
                                 <input type="hidden" name="filter_mode" value="{{ filter_mode }}">
+                                <input type="hidden" name="page" value="{{ current_page }}">
                                 <button type="submit" class="video-item {% if current_video and current_video.path == video.path %}active{% endif %} {% if not video.is_annotated %}not-annotated{% endif %}">
                                     <span class="video-name">{{ video.name }}</span>
                                     <span class="annotation-count">{{ video.annotation_count }} annotations</span>
@@ -202,7 +203,7 @@
                         <div class="pagination">
                             {% if total_pages > 1 %}
                                 {% if current_page > 1 %}
-                                    <a href="{{ url_for('index', page=current_page-1, filter=filter_mode, search=search_query, video=current_video.encoded_path if current_video else None) }}" class="page-btn">&laquo; Prev</a>
+                                    <a href="{{ url_for('index', page=current_page-1, filter=filter_mode, search=search_query, video=current_video.encoded_path if current_video else request.args.get('video', None)) }}" class="page-btn">&laquo; Prev</a>
                                 {% else %}
                                     <span class="page-btn disabled">&laquo; Prev</span>
                                 {% endif %}
@@ -210,7 +211,7 @@
                                 <span class="page-info">{{ current_page }} / {{ total_pages }}</span>
                                 
                                 {% if current_page < total_pages %}
-                                    <a href="{{ url_for('index', page=current_page+1, filter=filter_mode, search=search_query, video=current_video.encoded_path if current_video else None) }}" class="page-btn">Next &raquo;</a>
+                                    <a href="{{ url_for('index', page=current_page+1, filter=filter_mode, search=search_query, video=current_video.encoded_path if current_video else request.args.get('video', None)) }}" class="page-btn">Next &raquo;</a>
                                 {% else %}
                                     <span class="page-btn disabled">Next &raquo;</span>
                                 {% endif %}
