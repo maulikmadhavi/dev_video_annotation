@@ -2,3 +2,4 @@ backend/utils/__pycache__/video_symlink_manager.cpython-311.pyc
 # pixi environments
 .pixi/*
 !.pixi/config.toml
+backend/data/*.json
