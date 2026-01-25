@@ -56,23 +56,23 @@
         /* Custom progress bar styling */
         .custom-progress-container {
             width: 100%;
-            padding: 10px 0;
-            margin-top: 5px;
+            padding: 5px 0;
+            margin-top: 2px;
         }
         
         .custom-progress-bar {
             position: relative;
             width: 100%;
-            height: 8px;
+            height: 6px;
             background-color: #ddd;
-            border-radius: 4px;
+            border-radius: 3px;
             cursor: pointer;
         }
         
         .custom-progress-fill {
             height: 100%;
             background: linear-gradient(90deg, #2196F3, #1976D2);
-            border-radius: 4px;
+            border-radius: 3px;
             width: 0%;
             transition: width 0.1s linear;
         }
@@ -81,10 +81,10 @@
             position: absolute;
             top: 50%;
             transform: translate(-50%, -50%);
-            width: 18px;
-            height: 18px;
+            width: 14px;
+            height: 14px;
             background-color: #2196F3;
-            border: 3px solid #1565C0;
+            border: 2px solid #1565C0;
             border-radius: 50%;
             cursor: pointer;
             box-shadow: 0 2px 4px rgba(0,0,0,0.3);
@@ -94,6 +94,11 @@
         .custom-progress-thumb:hover {
             transform: translate(-50%, -50%) scale(1.2);
             background-color: #1976D2;
+        }
+        
+        .time-display {
+            font-size: 13px;
+            margin: 5px 0;
         }
 
         /* Remark field styling */
@@ -154,6 +159,65 @@
             background-color: #5a6268;
         }
         
+        /* Inline annotation form styling */
+        .annotation-controls-inline {
+            background-color: #f8f9fa;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            border: 1px solid #ddd;
+        }
+        
+        .annotation-form-inline {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .inline-input-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .inline-input-group label {
+            font-weight: bold;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+        
+        .inline-input-group input[type="text"] {
+            width: 150px;
+            padding: 6px 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .inline-input-group input[type="number"] {
+            width: 80px;
+            padding: 6px 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .add-btn {
+            padding: 8px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .add-btn:hover {
+            background-color: #218838;
+        }
+
         .remark-text {
             margin-top: 10px;
             font-style: italic;
@@ -336,6 +400,31 @@
                         <button class="speed-btn active" data-speed="1.0" onclick="setSpeed(1.0, this)">1.0x</button>
                         <button class="speed-btn" data-speed="1.5" onclick="setSpeed(1.5, this)">1.5x</button>
                         <button class="speed-btn" data-speed="2.0" onclick="setSpeed(2.0, this)">2x</button>
+                    </div>
+                    
+                    <!-- Compact annotation form inline -->
+                    <div class="annotation-controls-inline">
+                        <form action="{{ url_for('add_annotation') }}" method="post" class="annotation-form-inline">
+                            <input type="hidden" name="video_path" value="{{ current_video.path }}">
+                            <input type="hidden" name="encoded_path" value="{{ current_video.encoded_path }}">
+                            
+                            <div class="inline-input-group">
+                                <label for="annotationLabel">Label:</label>
+                                <input type="text" id="annotationLabel" name="label" placeholder="Label" required>
+                            </div>
+                            
+                            <div class="inline-input-group">
+                                <label for="startTime">Start:</label>
+                                <input type="number" id="startTime" name="start_time" step="0.1" min="0" placeholder="0.0" required>
+                            </div>
+                            
+                            <div class="inline-input-group">
+                                <label for="endTime">End:</label>
+                                <input type="number" id="endTime" name="end_time" step="0.1" min="0" placeholder="0.0" required>
+                            </div>
+                            
+                            <button type="submit" id="addAnnotation" class="add-btn">Add</button>
+                        </form>
                     </div>
 
                     <script>
@@ -551,31 +640,6 @@
 
                     <!-- Video remark section moved to bottom -->
 
-                    <div class="annotation-controls">
-                        <h3>Add New Annotation</h3>
-                        <form action="{{ url_for('add_annotation') }}" method="post" class="annotation-form">
-                            <input type="hidden" name="video_path" value="{{ current_video.path }}">
-                            <input type="hidden" name="encoded_path" value="{{ current_video.encoded_path }}">
-                            
-                            <div class="input-group">
-                                <label for="annotationLabel">Label:</label>
-                                <input type="text" id="annotationLabel" name="label" placeholder="Enter annotation label" required>
-                            </div>
-                            
-                            <div class="input-group">
-                                <label for="startTime">Start Time (seconds):</label>
-                                <input type="number" id="startTime" name="start_time" step="0.1" min="0" required>
-                            </div>
-                            
-                            <div class="input-group">
-                                <label for="endTime">End Time (seconds):</label>
-                                <input type="number" id="endTime" name="end_time" step="0.1" min="0" required>
-                            </div>
-                            
-                            <button type="submit" id="addAnnotation">Add Annotation</button>
-                        </form>
-                    </div>
-                    
                     <div class="annotation-list">
                         <h3>Annotations:</h3>
                         <div id="annotationDisplay">
