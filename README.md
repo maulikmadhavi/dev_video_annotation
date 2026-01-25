@@ -1,23 +1,20 @@
 # Video Annotation Tool
 
-A lightweight web application for annotating video files by marking segments with start and end times. 
-Built with Python Flask and minimal JavaScript, the tool is designed to be simple and efficient.
+A lightweight web application for annotating video files by marking segments with start and end times. Built with Python Flask and minimal JavaScript.
 
-<img src="assets/sample_screenshot.png" alt="alt text" style="width:85%;" />
+<img src="assets/sample_screenshot.png" alt="Video Annotation Tool Screenshot" style="width:85%;" />
 
 ## Features
 
-- **Video Management**: View, search, and filter videos (supports MP4, AVI, MOV, MKV)
-- **Annotation**: Mark segments of videos with start and end timestamps
-- **Timeline Visualization**: Red markers show annotations directly on the video timeline
-- **Filtering Options**: View all videos, only annotated videos, or only unannotated videos
-- **Search**: Find videos by filename
-- **Pagination**: Efficiently navigate large video collections (500+ videos)
-- **Path Normalization**: Automatically handles path inconsistencies in annotation data
+- **Video Management**: View, search, and filter videos (MP4, AVI, MOV, MKV)
+- **Annotation**: Mark segments with start and end timestamps
+- **Timeline Visualization**: Red markers show annotations on the video timeline
+- **Filtering**: View all, annotated only, or unannotated videos
+- **Search**: Find videos by filename or annotation labels
+- **Pagination**: Navigate large video collections (500+ videos)
+- **Path Normalization**: Automatic handling of path inconsistencies
 
 ## Getting Started
-
-
 
 ### Installation
 
@@ -31,30 +28,21 @@ Built with Python Flask and minimal JavaScript, the tool is designed to be simpl
    ```bash
    pixi install
    ```
-   or 
-   ```bash
-   pixi shell
-   ```
 
-3. Add your videos:
-   - Place your video files in the `/videos` directory
-   - Supported formats: MP4, AVI, MOV, MKV
+3. Add your videos to the `/videos` directory
 
 ### Running the Application
-
-Start the application with:
 
 ```bash
 ./run.sh
 ```
 
 Or manually:
-
 ```bash
 python backend/app.py
 ```
 
-Access the tool in your browser at: [http://127.0.0.1:5000](http://127.0.0.1:5000)
+Access the tool at: http://127.0.0.1:5000
 
 ## Usage Guide
 
@@ -62,49 +50,38 @@ Access the tool in your browser at: [http://127.0.0.1:5000](http://127.0.0.1:500
 
 - Browse videos in the left sidebar
 - Use the search box to find specific videos
-- Filter videos using the radio buttons:
-  - **All**: Show all available videos
-  - **Annotated Only**: Show only videos that have annotations
-  - **Not Annotated**: Show only videos without annotations
+- Filter using radio buttons: **All**, **Annotated Only**, or **Not Annotated**
 
 ### Creating Annotations
 
 1. Select a video from the sidebar
-2. Enter start time and end time in seconds
+2. Enter start and end times in seconds
 3. Click "Add Annotation"
 
 ### Managing Annotations
 
-Each annotation has two actions:
-- **Jump**: Move the video playhead to the annotation's start time
+- **Jump**: Move playhead to annotation's start time
 - **Delete**: Remove the annotation
 
 ### Timeline Markers
 
-- Red markers on the video timeline represent annotations
+- Red markers represent annotations on the timeline
+- Click markers to jump to that position
+- Hover for annotation details
+- Use mouse scroll for navigation
+- Use arrow keys to skip forward/backward 2-5 seconds
 
-- Click on a marker to jump to that annotation's start time
-
-- Hover over markers to see the annotation details
-
-- User can use mouse to scroll through the timeline if there are many annotations.
-
-- User can use keyboard arrow to skip forward/backward 2 to 5 seconds.
-
-- User can search the files based on the name or annotated labels. 
 ### Path Issues
 
-If the tool detects inconsistent file paths in your annotation data, a warning will appear with a "Fix Path Issues" button to automatically normalize paths.
+If inconsistent file paths are detected, a warning will appear with a "Fix Path Issues" button.
 
 ## Data Storage
 
-Annotation data is stored in: 
+Annotations are stored in `backend/data/annotation.json`
 
-- `/backend/data/annotation.json` (for existing annotations)
+## Utilities
 
-
-## Bonus
- Use `convert_annotations.py` to convert your CSV or XLS data to JSON format.
+Convert CSV/XLS data to JSON format:
 
 ```bash
 python backend/convert_annotations.py --in-file backend/data/input.csv
