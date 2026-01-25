@@ -1,0 +1,17 @@
+[workspace]
+authors = ["Maulik Madhavi <maulik.madhavi@gmail.com>"]
+channels = ["conda-forge"]
+name = "video_annotation"
+platforms = ["win-64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+python = "==3.12"
+pip = ">=25.3,<26"
+ffmpeg = ">=8.0.1,<9"
+
+[pypi-dependencies]
+flask = "==2.0.1"
+pandas = ">=3.0.0, <4"

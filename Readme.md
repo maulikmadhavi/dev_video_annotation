@@ -33,7 +33,11 @@ Built with Python Flask and minimal JavaScript, the tool is designed to be simpl
 
 2. Install dependencies:
    ```bash
-   pip install -r requirements.txt
+   pixi install
+   ```
+   or 
+   ```bash
+   pixi shell
    ```
 
 3. Add your videos:

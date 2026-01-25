@@ -1,0 +1,16 @@
+# Auto detect text files and normalize line endings to LF
+* text=auto eol=lf
+
+# Shell scripts should always use LF
+*.sh text eol=lf
+run.sh text eol=lf
+run_fix.sh text eol=lf
+
+# Config files
+*.toml text eol=lf
+*.json text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+
+# SCM syntax highlighting & preventing 3-way merges
+pixi.lock merge=binary linguist-language=YAML linguist-generated=true -diff
