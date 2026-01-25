@@ -581,20 +581,36 @@
                                 // Only process keyboard events if video is loaded
                                 if (!video) return;
                                 
-                                const seekAmount = 1; // Seconds to jump forward/backward
+                                // Skip if user is typing in an input field
+                                if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') return;
+                                
+                                const smallSeek = 2;  // Seconds for left/right arrows
+                                const largeSeek = 5;  // Seconds for up/down arrows
                                 
                                 switch(event.key) {
                                     case "ArrowLeft":
-                                        // Seek backward
-                                        video.currentTime = Math.max(0, video.currentTime - seekAmount);
+                                        // Seek backward 2 seconds
+                                        video.currentTime = Math.max(0, video.currentTime - smallSeek);
                                         event.preventDefault();
-                                        console.log("Seeking backward " + seekAmount + " seconds");
+                                        console.log("Seeking backward " + smallSeek + " seconds");
                                         break;
                                     case "ArrowRight":
-                                        // Seek forward
-                                        video.currentTime = Math.min(video.duration, video.currentTime + seekAmount);
+                                        // Seek forward 2 seconds
+                                        video.currentTime = Math.min(video.duration, video.currentTime + smallSeek);
                                         event.preventDefault();
-                                        console.log("Seeking forward " + seekAmount + " seconds");
+                                        console.log("Seeking forward " + smallSeek + " seconds");
+                                        break;
+                                    case "ArrowUp":
+                                        // Seek forward 5 seconds
+                                        video.currentTime = Math.min(video.duration, video.currentTime + largeSeek);
+                                        event.preventDefault();
+                                        console.log("Seeking forward " + largeSeek + " seconds");
+                                        break;
+                                    case "ArrowDown":
+                                        // Seek backward 5 seconds
+                                        video.currentTime = Math.max(0, video.currentTime - largeSeek);
+                                        event.preventDefault();
+                                        console.log("Seeking backward " + largeSeek + " seconds");
                                         break;
                                     case " ": // Space bar
                                         // Play/pause
