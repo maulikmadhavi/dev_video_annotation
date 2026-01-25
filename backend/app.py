@@ -390,6 +390,35 @@ def add_annotation():
     return redirect(url_for("index", video=encoded_path))
 
 
+@app.route("/mark_done", methods=["POST"])
+def mark_done():
+    """Mark a video as done with no events (fake annotation with 0,0 times)"""
+    video_path = request.form.get("video_path")
+    encoded_path = request.form.get("encoded_path")
+
+    if not video_path:
+        flash("Missing video path", "error")
+        return redirect(url_for("index", video=encoded_path))
+
+    # Normalize path before using it
+    video_path = normalize_path(video_path)
+
+    annotation_data = load_annotations()
+
+    if video_path not in annotation_data:
+        annotation_data[video_path] = []
+
+    # Add fake annotation with empty label and 0,0 times
+    annotation_data[video_path].append({"label": "", "start_time": 0, "end_time": 0})
+
+    if save_annotations(annotation_data):
+        flash("Video marked as done (no events)", "success")
+    else:
+        flash("Failed to mark video as done", "error")
+
+    return redirect(url_for("index", video=encoded_path))
+
+
 @app.route("/jump_to_annotation", methods=["POST"])
 def jump_to_annotation():
     """Jump to a specific annotation time"""
