@@ -457,6 +457,11 @@
                             <input type="hidden" name="encoded_path" value="{{ current_video.encoded_path }}">
                             
                             <div class="input-group">
+                                <label for="annotationLabel">Label:</label>
+                                <input type="text" id="annotationLabel" name="label" placeholder="Enter annotation label" required>
+                            </div>
+                            
+                            <div class="input-group">
                                 <label for="startTime">Start Time (seconds):</label>
                                 <input type="number" id="startTime" name="start_time" step="0.1" min="0" required>
                             </div>
@@ -476,7 +481,7 @@
                             {% if annotations %}
                                 {% for annotation in annotations %}
                                     <div class="annotation-item">
-                                        <span>Segment {{ loop.index }}: {{ annotation.start_time }}s - {{ annotation.end_time }}s</span>
+                                        <span>{{ loop.index }}. {% if annotation.label %}<strong>{{ annotation.label }}</strong>: {% endif %}{{ annotation.start_time }}s - {{ annotation.end_time }}s</span>
                                         <div class="annotation-actions">
                                             <form action="{{ url_for('jump_to_annotation') }}" method="post" class="inline-form">
                                                 <input type="hidden" name="video_path" value="{{ current_video.path }}">

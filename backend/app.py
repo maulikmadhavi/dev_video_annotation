@@ -354,9 +354,10 @@ def add_annotation():
     video_path = request.form.get("video_path")
     start_time = request.form.get("start_time")
     end_time = request.form.get("end_time")
+    label = request.form.get("label", "").strip()
     encoded_path = request.form.get("encoded_path")
 
-    if not all([video_path, start_time, end_time]):
+    if not all([video_path, start_time, end_time, label]):
         flash("Missing required fields", "error")
         return redirect(url_for("index", video=encoded_path))
 
@@ -379,7 +380,7 @@ def add_annotation():
     if video_path not in annotation_data:
         annotation_data[video_path] = []
 
-    annotation_data[video_path].append({"start_time": start_time, "end_time": end_time})
+    annotation_data[video_path].append({"label": label, "start_time": start_time, "end_time": end_time})
 
     if save_annotations(annotation_data):
         flash("Annotation added successfully", "success")
