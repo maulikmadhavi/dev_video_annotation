@@ -41,14 +41,36 @@ class VideoSymlinkManager:
                     if symlink_path.is_symlink():
                         symlink_path.unlink()
                     else:
-                        logger.warning(
-                            f"File with same name already exists: {symlink_path}"
-                        )
-                        continue
+                        # Check if it's a broken text file (from failed symlink attempt)
+                        try:
+                            if symlink_path.stat().st_size < 500:  # Small file, likely not a video
+                                with open(symlink_path, 'r') as f:
+                                    content = f.read()
+                                    if content.startswith('/') and '\n' not in content:
+                                        # It's a text file with a path, remove it
+                                        symlink_path.unlink()
+                                    else:
+                                        logger.warning(f"File with same name already exists: {symlink_path}")
+                                        continue
+                            else:
+                                logger.warning(f"File with same name already exists: {symlink_path}")
+                                continue
+                        except:
+                            logger.warning(f"File with same name already exists: {symlink_path}")
+                            continue
 
-                # Create the symlink
-                os.symlink(video_path, symlink_path)
-                logger.info(f"Created symlink: {symlink_path} -> {video_path}")
+                # Try to create the symlink, fall back to copy if it fails
+                try:
+                    os.symlink(video_path, symlink_path)
+                    logger.info(f"Created symlink: {symlink_path} -> {video_path}")
+                except OSError as e:
+                    # Symlink failed (common on Windows/WSL), try copying instead
+                    logger.warning(f"Symlink failed, copying file instead: {e}")
+                    try:
+                        shutil.copy2(video_path, symlink_path)
+                        logger.info(f"Copied file: {video_path} -> {symlink_path}")
+                    except Exception as copy_error:
+                        logger.error(f"Failed to copy file: {copy_error}")
 
             return True
         except Exception as e:

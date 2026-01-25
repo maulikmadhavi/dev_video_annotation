@@ -8,7 +8,7 @@
     <style>
         /* Custom video progress bar styles */
         video::-webkit-progress-bar {
-            background-color: #e0e0e0;
+            background-color: #a12323;
             border-radius: 2px;
         }
         
@@ -36,6 +36,64 @@
         
         video::-webkit-media-controls-panel {
             background: rgba(20, 20, 20, 0.7);
+        }
+        
+        /* Video slider thumb (cursor) styling - Blue color */
+        video::-webkit-media-controls-timeline::-webkit-slider-thumb {
+            background-color: #2196F3;
+            border: 2px solid #1976D2;
+            border-radius: 50%;
+            width: 14px;
+            height: 14px;
+        }
+        
+        video::-moz-range-thumb {
+            background-color: #2196F3;
+            border: 2px solid #1976D2;
+            border-radius: 50%;
+        }
+        
+        /* Custom progress bar styling */
+        .custom-progress-container {
+            width: 100%;
+            padding: 10px 0;
+            margin-top: 5px;
+        }
+        
+        .custom-progress-bar {
+            position: relative;
+            width: 100%;
+            height: 8px;
+            background-color: #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .custom-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #2196F3, #1976D2);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+        
+        .custom-progress-thumb {
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 18px;
+            height: 18px;
+            background-color: #2196F3;
+            border: 3px solid #1565C0;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            left: 0%;
+        }
+        
+        .custom-progress-thumb:hover {
+            transform: translate(-50%, -50%) scale(1.2);
+            background-color: #1976D2;
         }
 
         /* Remark field styling */
@@ -256,6 +314,14 @@
                         <div id="timelineMarkers" class="timeline-markers"></div>
                     </div>
                     
+                    <!-- Custom progress bar for better visibility -->
+                    <div class="custom-progress-container">
+                        <div id="customProgressBar" class="custom-progress-bar">
+                            <div id="customProgressFill" class="custom-progress-fill"></div>
+                            <div id="customProgressThumb" class="custom-progress-thumb"></div>
+                        </div>
+                    </div>
+                    
                     <!-- Add the time display below the video container -->
                     <div class="time-display">
                         Current Time: <span id="timeDisplay">0.000</span> seconds
@@ -317,6 +383,48 @@
                             return seconds + '.' + ('000' + milliseconds).slice(-3);
                             }
                             // --- End: Millisecond Time Display ---   
+                            
+                            // --- Start: Custom Progress Bar ---
+                            var progressBar = document.getElementById('customProgressBar');
+                            var progressFill = document.getElementById('customProgressFill');
+                            var progressThumb = document.getElementById('customProgressThumb');
+                            
+                            // Update custom progress bar on time update
+                            video.addEventListener('timeupdate', function() {
+                                if (video.duration) {
+                                    var percent = (video.currentTime / video.duration) * 100;
+                                    progressFill.style.width = percent + '%';
+                                    progressThumb.style.left = percent + '%';
+                                }
+                            });
+                            
+                            // Click on progress bar to seek
+                            progressBar.addEventListener('click', function(e) {
+                                var rect = progressBar.getBoundingClientRect();
+                                var percent = (e.clientX - rect.left) / rect.width;
+                                video.currentTime = percent * video.duration;
+                            });
+                            
+                            // Drag functionality for progress thumb
+                            var isDragging = false;
+                            
+                            progressThumb.addEventListener('mousedown', function(e) {
+                                isDragging = true;
+                                e.preventDefault();
+                            });
+                            
+                            document.addEventListener('mousemove', function(e) {
+                                if (isDragging && video.duration) {
+                                    var rect = progressBar.getBoundingClientRect();
+                                    var percent = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+                                    video.currentTime = percent * video.duration;
+                                }
+                            });
+                            
+                            document.addEventListener('mouseup', function() {
+                                isDragging = false;
+                            });
+                            // --- End: Custom Progress Bar ---
                             
                             // --- Start: Keyboard Navigation Controls ---
                             document.addEventListener('keydown', function(event) {
@@ -442,29 +550,7 @@
                     </script>
 
                     <!-- Video remark section moved to bottom -->
-                    <div class="video-remark-container">
-                        <h3>Video Remarks</h3>
-                        
-                        {% if remarks and remarks.get(current_video.path) %}
-                            <div class="remark-text">
-                                {{ remarks[current_video.path] }}
-                            </div>
-                        {% endif %}
-                        
-                        <form action="{{ url_for('add_remark') }}" method="post" class="remark-field">
-                            <input type="hidden" name="video_path" value="{{ current_video.path }}">
-                            <input type="hidden" name="encoded_path" value="{{ current_video.encoded_path }}">
-                            <!-- Add debug info visible only during development -->
-                            <div style="display: none;">
-                                <p>Debug - Video Path: {{ current_video.path }}</p>
-                                <p>Debug - Encoded Path: {{ current_video.encoded_path }}</p>
-                            </div>
-                            <textarea name="remark" placeholder="Add remarks or notes about this video (optional)" class="remark-input" onkeydown="if(event.keyCode === 32) event.stopPropagation();">{{ remarks[current_video.path] if remarks and remarks.get(current_video.path) else '' }}</textarea>
-                            <div class="remark-actions">
-                                <button type="submit" class="remark-btn">Save Remarks</button>
-                            </div>
-                        </form>
-                    </div>
+
                     <div class="annotation-controls">
                         <h3>Add New Annotation</h3>
                         <form action="{{ url_for('add_annotation') }}" method="post" class="annotation-form">
@@ -522,6 +608,31 @@
                                 </form>
                             {% endif %}
                         </div>
+                    
+                    <div class="video-remark-container">
+                        <h3>Video Remarks</h3>
+                        
+                        {% if remarks and remarks.get(current_video.path) %}
+                            <div class="remark-text">
+                                {{ remarks[current_video.path] }}
+                            </div>
+                        {% endif %}
+                        
+                        <form action="{{ url_for('add_remark') }}" method="post" class="remark-field">
+                            <input type="hidden" name="video_path" value="{{ current_video.path }}">
+                            <input type="hidden" name="encoded_path" value="{{ current_video.encoded_path }}">
+                            <!-- Add debug info visible only during development -->
+                            <div style="display: none;">
+                                <p>Debug - Video Path: {{ current_video.path }}</p>
+                                <p>Debug - Encoded Path: {{ current_video.encoded_path }}</p>
+                            </div>
+                            <textarea name="remark" placeholder="Add remarks or notes about this video (optional)" class="remark-input" onkeydown="if(event.keyCode === 32) event.stopPropagation();">{{ remarks[current_video.path] if remarks and remarks.get(current_video.path) else '' }}</textarea>
+                            <div class="remark-actions">
+                                <button type="submit" class="remark-btn">Save Remarks</button>
+                            </div>
+                        </form>
+                    </div>                    
+
                     </div>
                     
                   
