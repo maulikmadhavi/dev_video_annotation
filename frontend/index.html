@@ -417,12 +417,46 @@
                         <!-- ...existing code for jump notification... -->
                     {% endif %}
                     <div class="speed-controls">
+                        <button class="play-pause-btn" onclick="togglePlayPause(this)">▶ Play</button>
                         <button class="speed-btn" data-speed="0.5" onclick="setSpeed(0.5, this)">0.5x</button>
                         <button class="speed-btn" data-speed="0.75" onclick="setSpeed(0.75, this)">0.75x</button>
                         <button class="speed-btn active" data-speed="1.0" onclick="setSpeed(1.0, this)">1.0x</button>
                         <button class="speed-btn" data-speed="1.5" onclick="setSpeed(1.5, this)">1.5x</button>
                         <button class="speed-btn" data-speed="2.0" onclick="setSpeed(2.0, this)">2x</button>
                     </div>
+                    
+                    <script>
+                        function togglePlayPause(btn) {
+                            var video = document.getElementById('videoPlayer');
+                            if (video) {
+                                if (video.paused) {
+                                    video.play();
+                                    btn.textContent = '⏸ Pause';
+                                    btn.classList.add('playing');
+                                } else {
+                                    video.pause();
+                                    btn.textContent = '▶ Play';
+                                    btn.classList.remove('playing');
+                                }
+                            }
+                        }
+                        
+                        // Update button state when video plays/pauses from other controls
+                        document.addEventListener('DOMContentLoaded', function() {
+                            var video = document.getElementById('videoPlayer');
+                            var playPauseBtn = document.querySelector('.play-pause-btn');
+                            if (video && playPauseBtn) {
+                                video.addEventListener('play', function() {
+                                    playPauseBtn.textContent = '⏸ Pause';
+                                    playPauseBtn.classList.add('playing');
+                                });
+                                video.addEventListener('pause', function() {
+                                    playPauseBtn.textContent = '▶ Play';
+                                    playPauseBtn.classList.remove('playing');
+                                });
+                            }
+                        });
+                    </script>
                     
                     <!-- Compact annotation form inline -->
                     <div class="annotation-controls-inline">

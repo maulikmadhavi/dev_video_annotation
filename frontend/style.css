@@ -546,6 +546,32 @@ h2, h3 {
     display: flex;
     gap: 5px;
     margin: 5px 0;
+    align-items: center;
+}
+
+.play-pause-btn {
+    padding: 4px 12px;
+    background-color: #28a745;
+    color: white;
+    border: 1px solid #28a745;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.play-pause-btn:hover {
+    background-color: #218838;
+}
+
+.play-pause-btn.playing {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.play-pause-btn.playing:hover {
+    background-color: #c82333;
 }
 
 .speed-btn {
