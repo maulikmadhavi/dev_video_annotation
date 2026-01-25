@@ -210,8 +210,17 @@ def index():
     # Get filter parameters
     filter_mode = request.args.get("filter", "all")  # Default to showing all videos
     search_query = request.args.get("search", "").lower()
+    label_search = request.args.get("label_search", "").lower()
     page = int(request.args.get("page", 1))
     per_page = int(request.args.get("per_page", 50))  # Show 50 videos per page
+
+    # Collect all unique labels from annotations
+    all_labels = set()
+    for annotations in norm_annotation_data.values():
+        for ann in annotations:
+            if ann.get("label"):
+                all_labels.add(ann["label"])
+    all_labels = sorted(all_labels)
 
     # Track paths that appear in annotations but not in video directory
     missing_videos = []
@@ -244,6 +253,12 @@ def index():
         video_name = os.path.basename(video_path)
         if search_query and search_query not in video_name.lower():
             continue
+
+        # Apply label search filtering
+        if label_search:
+            video_labels = [ann.get("label", "").lower() for ann in annotations]
+            if not any(label_search in label for label in video_labels):
+                continue
 
         filtered_videos.append(
             {
@@ -299,6 +314,8 @@ def index():
         remarks=norm_remarks_data,
         filter_mode=filter_mode,
         search_query=search_query,
+        label_search=label_search,
+        all_labels=all_labels,
         total_videos=len(all_video_paths),
         displayed_videos=len(filtered_videos),
         current_page=page,
@@ -317,16 +334,17 @@ def filter_videos():
     """Handle video filtering"""
     filter_mode = request.form.get("filter", "all")
     search_query = request.form.get("search", "")
+    label_search = request.form.get("label_search", "")
 
     # Preserve the currently selected video if any
     selected_video = request.args.get("video")
     if selected_video:
         return redirect(
             url_for(
-                "index", filter=filter_mode, search=search_query, video=selected_video
+                "index", filter=filter_mode, search=search_query, label_search=label_search, video=selected_video
             )
         )
-    return redirect(url_for("index", filter=filter_mode, search=search_query))
+    return redirect(url_for("index", filter=filter_mode, search=search_query, label_search=label_search))
 
 
 @app.route("/select_video", methods=["POST"])

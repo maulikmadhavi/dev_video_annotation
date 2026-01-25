@@ -217,6 +217,19 @@
         .add-btn:hover {
             background-color: #218838;
         }
+        
+        /* Label search styling */
+        .label-search-box {
+            margin-top: 8px;
+        }
+        
+        .label-search-box input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
 
         .remark-text {
             margin-top: 10px;
@@ -259,6 +272,15 @@
                             <div class="search-box">
                                 <input type="text" name="search" placeholder="Search videos..." value="{{ search_query }}">
                                 <button type="submit" class="search-btn">Search</button>
+                            </div>
+                            
+                            <div class="search-box label-search-box">
+                                <input type="text" name="label_search" placeholder="Search by label..." value="{{ label_search }}" list="label-suggestions">
+                                <datalist id="label-suggestions">
+                                    {% for label in all_labels %}
+                                    <option value="{{ label }}">
+                                    {% endfor %}
+                                </datalist>
                             </div>
                             
                             <div class="filter-title">Filter Videos:</div>
