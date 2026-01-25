@@ -432,7 +432,12 @@
                             
                             <div class="inline-input-group">
                                 <label for="annotationLabel">Label:</label>
-                                <input type="text" id="annotationLabel" name="label" placeholder="Label" required>
+                                <input type="text" id="annotationLabel" name="label" placeholder="Label" required list="annotation-label-suggestions">
+                                <datalist id="annotation-label-suggestions">
+                                    {% for label in all_labels %}
+                                    <option value="{{ label }}">
+                                    {% endfor %}
+                                </datalist>
                             </div>
                             
                             <div class="inline-input-group">
