@@ -17,11 +17,7 @@ Built with Python Flask and minimal JavaScript, the tool is designed to be simpl
 
 ## Getting Started
 
-### Prerequisites
 
-- Python 3.6 or higher
-- Flask 2.0.1 or higher
-- Modern web browser (Chrome, Firefox, Safari, Edge)
 
 ### Installation
 
@@ -86,9 +82,16 @@ Each annotation has two actions:
 ### Timeline Markers
 
 - Red markers on the video timeline represent annotations
+
 - Click on a marker to jump to that annotation's start time
+
 - Hover over markers to see the annotation details
 
+- User can use mouse to scroll through the timeline if there are many annotations.
+
+- User can use keyboard arrow to skip forward/backward 2 to 5 seconds.
+
+- User can search the files based on the name or annotated labels. 
 ### Path Issues
 
 If the tool detects inconsistent file paths in your annotation data, a warning will appear with a "Fix Path Issues" button to automatically normalize paths.
@@ -100,14 +103,9 @@ Annotation data is stored in:
 - `/backend/data/annotation.json` (for existing annotations)
 
 
-## For new data annotation
-1. Use `convert_annotations.py` to convert your CSV or XLS data to JSON format.
+## Bonus
+ Use `convert_annotations.py` to convert your CSV or XLS data to JSON format.
 
 ```bash
 python backend/convert_annotations.py --in-file backend/data/input.csv
 ```
-
-2. 
-
-
-
