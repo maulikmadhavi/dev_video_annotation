@@ -1,0 +1,38 @@
+[MAIN]
+# Analyse import fallback blocks
+analyse-fallback-blocks=no
+
+# Python code to execute before analysis
+init-hook='import sys; sys.path.insert(0, "backend")'
+
+[MESSAGES CONTROL]
+# Disable specific messages
+disable=
+    C0301,  # Line too long
+    R0914,  # Too many local variables
+    R0912,  # Too many branches
+    R0915,  # Too many statements
+    W0718,  # Catching too general exception
+    W1514,  # Using open without explicitly specifying encoding
+
+[FORMAT]
+# Maximum number of characters on a single line
+max-line-length=120
+
+[DESIGN]
+# Maximum number of local variables
+max-locals=40
+
+# Maximum number of branches
+max-branches=25
+
+# Maximum number of statements in function body
+max-statements=80
+
+[BASIC]
+# Good variable names
+good-names=i,j,k,f,e,ex,_,id,db,app
+
+[SIMILARITIES]
+# Minimum lines number of a similarity
+min-similarity-lines=10
