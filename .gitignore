@@ -1,5 +1,15 @@
-backend/utils/__pycache__/video_symlink_manager.cpython-311.pyc
 # pixi environments
 .pixi/*
 !.pixi/config.toml
 backend/data/*.json
+!backend/data/annotation.json
+!backend/data/ground_truth.json
+videos/*.mp4
+backend/data_bak*
+utils_data.py
+intrested_tag/*
+*.csv
+interested_tag/*
+*_sequence_vectors.json
+backend/utils/__pycache__/
+backend/data_*

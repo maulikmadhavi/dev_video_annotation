@@ -16,7 +16,7 @@ except ImportError:
     print("Warning: opencv-python not installed. Will estimate duration from annotations.")
 
 CHUNK_DURATION = 10  # seconds
-VIDEO_FOLDER = "D:/code_from_scratch/video_annotation/videos"
+VIDEO_FOLDER = "videos"
 IN_JSON = 'backend/data/annotation.json'
 OUT_CHUNK_JSON = 'backend/data/chunk_annotation.json'
 OUT_GROUND_TRUTH_JSON = 'backend/data/ground_truth.json'
@@ -38,6 +38,9 @@ def get_video_duration(video_path, annotations):
         duration = get_video_duration_cv2(video_path)
         if duration is not None:
             return duration
+    else:
+        print(f"Warning: Cannot access video file {video_path}. Estimating duration from annotations.")
+        breakpoint()
     
     return max(ann['end_time'] for ann in annotations) if annotations else 0
 
