@@ -408,7 +408,7 @@
 
                 {% if current_video %}
                 <div class="video-container">
-                    <video id="videoPlayer" controls>
+                    <video id="videoPlayer" controls controlsList="nodownload">
                         <source src="/videos/{{ current_video.name }}" type="video/mp4">
                         Your browser does not support the video tag.
                     </video>
@@ -533,6 +533,14 @@
                     if (video && jumpTime > 0) {
                         video.currentTime = jumpTime;
                         video.play();
+                    }
+
+                    // Disable right-click on video player to prevent saving
+                    if (video) {
+                        video.addEventListener('contextmenu', function(e) {
+                            e.preventDefault();
+                            return false;
+                        });
                     }
 
                     // Always create timeline markers
@@ -672,8 +680,8 @@
                         var annotations = [
                             {% for annotation in annotations %}
                     {
-                        start: { { annotation.start_time } },
-                        end: { { annotation.end_time } }
+                        start: {{ annotation.start_time }},
+                        end: {{ annotation.end_time }}
                     },
                     {% endfor %}
                             ];
